@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { BookmarkList } from "@/app/components/BookmarkList";
 import { AddBookmarkForm } from "@/app/components/AddBookmarkForm";
-import { SignOutButton } from "@/app/components/SignOutButton";
+import { DashboardProfile } from "@/app/components/DashboardProfile";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -14,19 +14,28 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
+  const metadata = user.user_metadata ?? {};
+  const avatarUrl =
+    (metadata.avatar_url as string) ??
+    (metadata.picture as string) ??
+    null;
+  const name =
+    (metadata.full_name as string) ??
+    (metadata.name as string) ??
+    null;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       <header className="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur">
-        <div className="mx-auto max-w-2xl px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50">
+        <div className="mx-auto max-w-2xl px-4 py-4 flex items-center justify-between gap-4">
+          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50 shrink-0">
             My Bookmarks
           </h1>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-slate-600 dark:text-slate-400 truncate max-w-[140px]">
-              {user.email}
-            </span>
-            <SignOutButton />
-          </div>
+          <DashboardProfile
+            avatarUrl={avatarUrl}
+            name={name}
+            email={user.email ?? null}
+          />
         </div>
       </header>
 
